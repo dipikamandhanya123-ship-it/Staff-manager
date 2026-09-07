@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff Manager</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body class="bg-slate-50 text-slate-900 font-sans antialiased">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const {
+      useState,
+      useEffect,
+      useMemo,
+      useRef
+    } = React;
+
+    // =========================
+    // ICONS
+    // =========================
+
+    const IconUsers = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    );
+
+    const IconWallet = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+        <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+        <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
+      </svg>
+    );
+
+    const IconCalendar = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect width="18" height="18" x="3" y="4" rx="2" />
+        <line x1="16" x2="16" y1="2" y2="6" />
+        <line x1="8" x2="8" y1="2" y2="6" />
+        <line x1="3" x2="21" y1="10" y2="10" />
+        <path d="m9 16 2 2 4-4" />
+      </svg>
+    );
+
+    const IconPlus = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="12" x2="12" y1="5" y2="19" />
+        <line x1="5" x2="19" y1="12" y2="12" />
+      </svg>
+    );
+
+    const IconArrowLeft = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m12 19-7-7 7-7" />
+        <path d="M19 12H5" />
+      </svg>
+    );
+
+    const IconTrash = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 6h18" />
+        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+        <line x1="10" x2="10" y1="11" y2="17" />
+        <line x1="14" x2="14" y1="11" y2="17" />
+      </svg>
+    );
+
+    const IconEdit = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+        <path d="m15 5 4 4" />
+      </svg>
+    );
+
+    const IconX = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </svg>
+    );
+
+    const IconCheck = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+    );
+
+    const IconClock = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+    );
+
+    const IconDownload = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="7 10 12 15 17 10" />
+        <line x1="12" y1="15" x2="12" y2="3" />
+      </svg>
+    );
+
+    const IconUpload = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="17 8 12 3 7 8" />
+        <line x1="12" y1="3" x2="12" y2="15" />
+      </svg>
+    );
+
+    // =========================
+    // UTILITIES
+    // =========================
+
+    const getTodayString = () => {
+      const d = new Date();
+      const offset = d.getTimezoneOffset();
+      const local = new Date(d.getTime() - offset * 60000);
+      return local.toISOString().split("T")[0];
+    };
+
+    const formatCurrency = (amount) =>
+      new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 0
+      }).format(Number(amount) || 0);
+
+    const formatDate = (dateStr) => {
+      if (!dateStr) return "-";
+
+      const date = new Date(dateStr + "T00:00:00");
+
+      return date.toLocaleDateString("en-IN", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      });
+    };
+
+    const safeParse = (key, fallback = []) => {
+      try {
+        const value = localStorage.getItem(key);
+        if (!value) return fallback;
+
+        const parsed = JSON.parse(value);
+
+        return Array.isArray(parsed) ? parsed : fallback;
+      } catch {
+        return fallback;
+      }
+    };
+
+    const saveToStorage = (key, data) => {
+      try {
+        localStorage.setItem(key, JSON.stringify(data));
+      } catch (error) {
+        if (
+          error.name === "QuotaExceededError" ||
+          error.name === "NS_ERROR_DOM_QUOTA_REACHED"
+        ) {
+          alert(
+            "⚠️ Storage Full! Naya data save nahi ho raha hai."
+          );
+        }
+      }
+    };
+
+    // =========================
+    // MAIN APP
+    // =========================
+
+    function App() {
+
+      const [staffList, setStaffList] = useState(() =>
+        safeParse("staffData")
+      );
+
+      const [transactions, setTransactions] = useState(() =>
+        safeParse("txData")
+      );
+
+      const [attendance, setAttendance] = useState(() =>
+        safeParse("attData")
+      );
+
+      const [currentView, setCurrentView] = useState("dashboard");
+      const [selectedStaffId, setSelectedStaffId] = useState(null);
+      const [attendanceDate, setAttendanceDate] =
+        useState(getTodayString());
+
+      const [isAddStaffOpen, setIsAddStaffOpen] = useState(false);
+      const [isEditStaffOpen, setIsEditStaffOpen] = useState(false);
+      const [isAddTxOpen, setIsAddTxOpen] = useState(false);
+
+      const fileInputRef = useRef(null);
+
+      // =========================
+      // STORAGE
+      // =========================
+
+      useEffect(() => {
+        saveToStorage("staffData", staffList);
+      }, [staffList]);
+
+      useEffect(() => {
+        saveToStorage("txData", transactions);
+      }, [transactions]);
+
+      useEffect(() => {
+        saveToStorage("attData", attendance);
+      }, [attendance]);
+
+      // =========================
+      // EXPORT
+      // =========================
+
+      const handleExport = () => {
+        const data = {
+          staffData: staffList,
+          txData: transactions,
+          attData: attendance,
+          exportDate: getTodayString()
+        };
+
+        const dataStr =
+          "data:application/json;charset=utf-8," +
+          encodeURIComponent(JSON.stringify(data, null, 2));
+
+        const link = document.createElement("a");
+
+        link.href = dataStr;
+        link.download =
+          `staff_manager_backup_${getTodayString()}.json`;
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      };
+
+      // =========================
+      // IMPORT
+      // =========================
+
+      const handleImport = (event) => {
+        const file = event.target.files?.[0];
+
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          try {
+            const importedData = JSON.parse(e.target.result);
+
+            if (
+              Array.isArray(importedData.staffData) &&
+              Array.isArray(importedData.txData) &&
+              Array.isArray(importedData.attData)
+            ) {
+              if (
+                window.confirm(
+                  "क्या आप सच में डेटा रिस्टोर करना चाहते हैं?\n\nमौजूदा डेटा बदल जाएगा।"
+                )
+              ) {
+                setStaffList(importedData.staffData);
+                setTransactions(importedData.txData);
+                setAttendance(importedData.attData);
+
+                alert("Backup restored successfully! 🎉");
+              }
+            } else {
+              alert(
+                "Invalid backup file format."
+              );
+            }
+          } catch {
+            alert(
+              "Error reading file. सही JSON backup file चुनें।"
+            );
+          }
+
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+          }
+        };
+
+        reader.readAsText(file);
+      };
+
+      // =========================
+      // STAFF STATS
+      // =========================
+
+      const getStaffStats = (staffId) => {
+
+        const staff = staffList.find(
+          (s) => s.id === staffId
+        );
+
+        if (!staff) return null;
+
+        const staffAtt = attendance.filter(
+          (a) => a.staffId === staffId
+        );
+
+        const staffTx = transactions.filter(
+          (t) => t.staffId === staffId
+        );
+
+        let openingAmt =
+          parseFloat(staff.openingBalance) || 0;
+
+        if (staff.openingType === "Debit") {
+          openingAmt = -openingAmt;
+        }
+
+        let presentDays = 0;
+        let halfDays = 0;
+        let absentDays = 0;
+
+        staffAtt.forEach((a) => {
+
+          if (a.status === "Present") {
+            presentDays++;
+          }
+
+          if (a.status === "Half-Day") {
+            halfDays++;
+          }
+
+          if (a.status === "Absent") {
+            absentDays++;
+          }
+        });
+
+        const wage =
+          parseFloat(staff.wage) || 0;
+
+        const totalEarned =
+          presentDays * wage +
+          halfDays * wage * 0.5;
+
+        let totalAdvances = 0;
+
+        staffTx.forEach((t) => {
+
+          if (t.type === "Payment") {
+            totalAdvances +=
+              parseFloat(t.amount) || 0;
+          }
+        });
+
+        const currentBalance =
+          openingAmt +
+          totalEarned -
+          totalAdvances;
+
+        return {
+          openingAmt,
+          presentDays,
+          halfDays,
+          absentDays,
+          wage,
+          totalEarned,
+          totalAdvances,
+          currentBalance,
+
+          attHistory: [...staffAtt].sort(
+            (a, b) =>
+              new Date(b.date) -
+              new Date(a.date)
+          ),
+
+          txHistory: [...staffTx].sort(
+            (a, b) =>
+              new Date(b.date) -
+              new Date(a.date)
+          )
+        };
+      };
+
+      const totalCompanyBalance = useMemo(() => {
+
+        return staffList.reduce(
+          (total, staff) => {
+
+            const stats =
+              getStaffStats(staff.id);
+
+            return total +
+              (stats?.currentBalance || 0);
+
+          },
+          0
+        );
+
+      }, [staffList, transactions, attendance]);
+
+      // =========================
+      // ATTENDANCE
+      // =========================
+
+      const handleMarkAttendance = (
+        staffId,
+        status
+      ) => {
+
+        setAttendance((prev) => {
+
+          const filtered = prev.filter(
+            (a) =>
+              !(
+                a.staffId === staffId &&
+                a.date === attendanceDate
+              )
+          );
+
+          return [
+            ...filtered,
+            {
+              id: Date.now().toString(),
+              staffId,
+              date: attendanceDate,
+              status
+            }
+          ];
+        });
+      };
+
+      // =========================
+      // SAVE STAFF
+      // =========================
+
+      const saveStaff = (
+        staffData,
+        isEdit = false
+      ) => {
+
+        if (isEdit) {
+
+          setStaffList((prev) =>
+            prev.map((s) =>
+              s.id === staffData.id
+                ? staffData
+                : s
+            )
+          );
+
+          setIsEditStaffOpen(false);
+
+        } else {
+
+          const newStaff = {
+            ...staffData,
+            id: Date.now().toString(),
+            joinedDate: getTodayString()
+          };
+
+          setStaffList((prev) => [
+            ...prev,
+            newStaff
+          ]);
+
+          setIsAddStaffOpen(false);
+        }
+      };
+
+      // =========================
+      // DELETE STAFF
+      // =========================
+
+      const removeStaff = () => {
+
+        if (
+          !window.confirm(
+            "क्या आप सच में इस स्टाफ मेंबर को हमेशा के लिए डिलीट करना चाहते हैं?"
+          )
+        ) {
+          return;
+        }
+
+        setStaffList((prev) =>
+          prev.filter(
+            (s) => s.id !== selectedStaffId
+          )
+        );
+
+        setTransactions((prev) =>
+          prev.filter(
+            (t) => t.staffId !== selectedStaffId
+          )
+        );
+
+        setAttendance((prev) =>
+          prev.filter(
+            (a) => a.staffId !== selectedStaffId
+          )
+        );
+
+        setSelectedStaffId(null);
+        setCurrentView("dashboard");
+      };
+
+      // =========================
+      // DELETE TRANSACTION
+      // =========================
+
+      const deleteTransaction = (txId) => {
+
+        if (
+          window.confirm(
+            "क्या आप सच में इस पेमेंट एंट्री को डिलीट करना चाहते हैं?"
+          )
+        ) {
+          setTransactions((prev) =>
+            prev.filter((t) => t.id !== txId)
+          );
+        }
+      };
+
+      // =========================
+      // DASHBOARD
+      // =========================
+
+      const DashboardView = () => (
+
+        <div className="space-y-6">
+
+          {/* SUMMARY */}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            <div className="bg-blue-600 text-white rounded-2xl p-5 shadow-lg">
+
+              <div className="flex items-center space-x-3 mb-2">
+
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <IconUsers />
+                </div>
+
+                <h3 className="font-medium text-blue-100">
+                  Total Staff
+                </h3>
+
+              </div>
+
+              <p className="text-3xl font-bold">
+                {staffList.length}
+              </p>
+
+            </div>
+
+            <div className="bg-emerald-600 text-white rounded-2xl p-5 shadow-lg">
+
+              <div className="flex items-center space-x-3 mb-2">
+
+                <div className="p-2 bg-white/20 rounded-lg">
+                  <IconWallet />
+                </div>
+
+                <h3 className="font-medium text-emerald-100">
+                  Total Balance
+                </h3>
+
+              </div>
+
+              <p className="text-3xl font-bold">
+                {formatCurrency(totalCompanyBalance)}
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* ATTENDANCE */}
+
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+
+              <h2 className="text-xl font-bold text-slate-800 flex items-center">
+
+                <span className="text-blue-600 mr-2">
+                  <IconCalendar />
+                </span>
+
+                Daily Attendance
+
+              </h2>
+
+              <input
+                type="date"
+                value={attendanceDate}
+                onChange={(e) =>
+                  setAttendanceDate(e.target.value)
+                }
+                className="border border-slate-200 rounded-xl px-4 py-2 text-slate-700 bg-slate-50 outline-none"
+              />
+
+            </div>
+
+            {staffList.length === 0 ? (
+
+              <div className="text-center py-10 text-slate-500">
+                No staff members yet.
+                <br />
+                Click <b>Add Staff</b> above.
+              </div>
+
+            ) : (
+
+              <div className="space-y-4">
+
+                {staffList.map((staff) => {
+
+                  const record =
+                    attendance.find(
+                      (a) =>
+                        a.staffId === staff.id &&
+                        a.date === attendanceDate
+                    );
+
+                  const status =
+                    record?.status || null;
+
+                  const stats =
+                    getStaffStats(staff.id);
+
+                  return (
+
+                    <div
+                      key={staff.id}
+                      className="p-4 border border-slate-100 rounded-xl bg-slate-50/50"
+                    >
+
+                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
+                        <div
+                          className="flex items-center space-x-4 cursor-pointer"
+                          onClick={() => {
+                            setSelectedStaffId(staff.id);
+                            setCurrentView("staffDetails");
+                          }}
+                        >
+
+                          <div className="h-12 w-12 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg">
+
+                            {staff.name
+                              ?.charAt(0)
+                              ?.toUpperCase()}
+
+                          </div>
+
+                          <div>
+
+                            <h3 className="font-semibold text-slate-800 text-lg">
+                              {staff.name}
+                            </h3>
+
+                            <p className="text-sm text-slate-500">
+
+                              {formatCurrency(staff.wage)}
+                              /day
+
+                              <span
+                                className={`ml-2 font-medium ${
+                                  stats.currentBalance >= 0
+                                    ? "text-emerald-600"
+                                    : "text-red-600"
+                                }`}
+                              >
+                                Bal:{" "}
+                                {formatCurrency(
+                                  stats.currentBalance
+                                )}
+                              </span>
+
+                            </p>
+
+                          </div>
+
+                        </div>
+
+                        {/* ATTENDANCE BUTTONS */}
+
+                        <div className="grid grid-cols-3 gap-2 w-full lg:w-auto">
+
+                          <button
+                            onClick={() =>
+                              handleMarkAttendance(
+                                staff.id,
+                                "Present"
+                              )
+                            }
+                            className={`flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-bold transition ${
+                              status === "Present"
+                                ? "bg-emerald-600 text-white"
+                                : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                            }`}
+                          >
+                            <IconCheck />
+                            Present
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              handleMarkAttendance(
+                                staff.id,
+                                "Half-Day"
+                              )
+                            }
+                            className={`flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-bold transition ${
+                              status === "Half-Day"
+                                ? "bg-amber-500 text-white"
+                                : "bg-amber-50 text-amber-700 hover:bg-amber-100"
+                            }`}
+                          >
+                            <IconClock />
+                            Half
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              handleMarkAttendance(
+                                staff.id,
+                                "Absent"
+                              )
+                            }
+                            className={`flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-bold transition ${
+                              status === "Absent"
+                                ? "bg-red-600 text-white"
+                                : "bg-red-50 text-red-700 hover:bg-red-100"
+                            }`}
+                          >
+                            <IconX />
+                            Absent
+                          </button>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  );
+                })}
+
+              </div>
+
+            )}
+
+          </div>
+
+          {/* BACKUP */}
+
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+
+            <h3 className="font-bold text-slate-800 mb-3 text-sm uppercase tracking-wider">
+              Data Backup & Restore
+            </h3>
+
+            <p className="text-xs text-slate-500 mb-4">
+              Export your data to save a backup on your phone.
+              Import a backup file to restore your previous data.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+
+              <button
+                onClick={handleExport}
+                className="flex-1 flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl text-sm font-medium"
+              >
+                <IconDownload />
+                Export Backup
+              </button>
+
+              <button
+                onClick={() =>
+                  fileInputRef.current?.click()
+                }
+                className="flex-1 flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl text-sm font-medium"
+              >
+                <IconUpload />
+                Import Backup
+              </button>
+
+              <input
+                type="file"
+                accept=".json,application/json"
+                ref={fileInputRef}
+                onChange={handleImport}
+                className="hidden"
+              />
+
+            </div>
+
+          </div>
+
+        </div>
+
+      );
+
+      // =========================
+      // STAFF DETAILS
+      // =========================
+
+      const StaffDetailsView = () => {
+
+        const staff =
+          staffList.find(
+            (s) => s.id === selectedStaffId
+          );
+
+        if (!staff) {
+
+          return (
+            <div className="text-center py-10">
+              Staff member not found.
+            </div>
+          );
+
+        }
+
+        const stats =
+          getStaffStats(staff.id);
+
+        return (
+
+          <div className="space-y-6">
+
+            {/* TOP */}
+
+            <div className="flex justify-between items-center gap-3">
+
+              <button
+                onClick={() =>
+                  setCurrentView("dashboard")
+                }
+                className="flex items-center text-slate-500 hover:text-slate-800 font-medium"
+              >
+                <span className="mr-2">
+                  <IconArrowLeft />
+                </span>
+                Back
+              </button>
+
+              <div className="flex gap-2">
+
+                <button
+                  onClick={() =>
+                    setIsEditStaffOpen(true)
+                  }
+                  className="flex items-center text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg font-medium text-sm"
+                >
+                  <span className="mr-1.5">
+                    <IconEdit />
+                  </span>
+                  Edit
+                </button>
+
+                <button
+                  onClick={removeStaff}
+                  className="flex items-center text-red-600 bg-red-50 px-3 py-1.5 rounded-lg font-medium text-sm"
+                >
+                  <span className="mr-1.5">
+                    <IconTrash />
+                  </span>
+                  Remove
+                </button>
+
+              </div>
+
+            </div>
+
+            {/* PROFILE */}
+
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+
+              <div className="flex items-center gap-5 text-center md:text-left flex-col md:flex-row">
+
+                <div className="h-20 w-20 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold text-3xl">
+                  {staff.name
+                    ?.charAt(0)
+                    ?.toUpperCase()}
+                </div>
+
+                <div>
+
+                  <h1 className="text-2xl font-bold text-slate-800">
+                    {staff.name}
+                  </h1>
+
+                  <p className="text-slate-500">
+                    Daily Salary:{" "}
+                    {formatCurrency(staff.wage)}
+                    {" • "}
+                    Joined{" "}
+                    {formatDate(staff.joinedDate)}
+                  </p>
+
+                  {staff.phone && (
+                    <p className="text-slate-500 text-sm mt-1">
+                      📞 {staff.phone}
+                    </p>
+                  )}
+
+                </div>
+
+              </div>
+
+              <button
+                onClick={() =>
+                  setIsAddTxOpen(true)
+                }
+                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-medium flex items-center w-full md:w-auto justify-center"
+              >
+                <span className="mr-2">
+                  <IconPlus />
+                </span>
+                Pay Advance / Record Tx
+              </button>
+
+            </div>
+
+            {/* BALANCE */}
+
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+
+              <h3 className="font-bold text-slate-800 mb-4">
+                Overall Balance Calculation
+              </h3>
+
+              <div className="space-y-3 font-mono text-sm">
+
+                <div className="flex justify-between text-slate-600">
+                  <span>Opening Balance:</span>
+
+                  <span
+                    className={
+                      stats.openingAmt >= 0
+                        ? "text-emerald-600"
+                        : "text-red-600"
+                    }
+                  >
+                    {formatCurrency(
+                      stats.openingAmt
+                    )}
+                  </span>
+                </div>
+
+                <div className="flex justify-between text-slate-600">
+
+                  <span>
+                    Earned from Attendance
+                    {" "}
+                    ({stats.presentDays}P,{" "}
+                    {stats.halfDays}H):
+                  </span>
+
+                  <span className="text-emerald-600">
+                    +{formatCurrency(
+                      stats.totalEarned
+                    )}
+                  </span>
+
+                </div>
+
+                <div className="flex justify-between text-slate-600 border-b pb-3">
+
+                  <span>
+                    Advances & Payments Given:
+                  </span>
+
+                  <span className="text-red-600">
+                    -{formatCurrency(
+                      stats.totalAdvances
+                    )}
+                  </span>
+
+                </div>
+
+                <div className="flex justify-between font-bold text-lg pt-1">
+
+                  <span>
+                    Final Current Balance:
+                  </span>
+
+                  <span
+                    className={
+                      stats.currentBalance >= 0
+                        ? "text-emerald-600"
+                        : "text-red-600"
+                    }
+                  >
+                    {formatCurrency(
+                      stats.currentBalance
+                    )}
+                  </span>
+
+                </div>
+
+                <p className="text-right text-xs font-sans text-slate-500">
+
+                  {stats.currentBalance >= 0
+                    ? "(Payable to Staff)"
+                    : "(Advance taken by Staff)"}
+
+                </p>
+
+              </div>
+
+            </div>
+
+            {/* HISTORY */}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+              {/* ATTENDANCE */}
+
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+
+                <div className="bg-slate-50 px-4 py-3 border-b font-bold text-slate-700">
+                  Attendance History
+                </div>
+
+                <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+
+                  {stats.attHistory.length === 0 ? (
+
+                    <div className="p-6 text-center text-sm text-slate-400">
+                      No attendance records.
+                    </div>
+
+                  ) : (
+
+                    stats.attHistory.map((r) => (
+
+                      <div
+                        key={r.id}
+                        className="p-4 flex justify-between items-center text-sm"
+                      >
+
+                        <span className="font-medium text-slate-800">
+                          {formatDate(r.date)}
+                        </span>
+
+                        <span
+                          className={`px-2 py-1 rounded font-bold text-xs ${
+                            r.status === "Present"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : r.status === "Absent"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-amber-100 text-amber-700"
+                          }`}
+                        >
+                          {r.status}
+                        </span>
+
+                      </div>
+
+                    ))
+
+                  )}
+
+                </div>
+
+              </div>
+
+              {/* TRANSACTIONS */}
+
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+
+                <div className="bg-slate-50 px-4 py-3 border-b font-bold text-slate-700">
+                  Transaction History
+                </div>
+
+                <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+
+                  {stats.txHistory.length === 0 ? (
+
+                    <div className="p-6 text-center text-sm text-slate-400">
+                      No payment records.
+                    </div>
+
+                  ) : (
+
+                    stats.txHistory.map((tx) => (
+
+                      <div
+                        key={tx.id}
+                        className="p-4 flex justify-between items-center text-sm hover:bg-slate-50"
+                      >
+
+                        <div>
+
+                          <p className="font-bold text-slate-800">
+                            Advance Given
+                          </p>
+
+                          <p className="text-xs text-slate-400">
+                            {formatDate(tx.date)}
+                          </p>
+
+                        </div>
+
+                        <div className="flex items-center space-x-3">
+
+                          <span className="font-bold text-red-600">
+                            -{formatCurrency(tx.amount)}
+                          </span>
+
+                          <button
+                            onClick={() =>
+                              deleteTransaction(tx.id)
+                            }
+                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                            title="Delete Payment"
+                          >
+                            <IconTrash />
+                          </button>
+
+                        </div>
+
+                      </div>
+
+                    ))
+
+                  )}
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        );
+      };
+
+      // =========================
+      // STAFF FORM MODAL
+      // IMPORTANT:
+      // Hooks are declared BEFORE
+      // conditional return.
+      // =========================
+
+      const StaffFormModal = ({
+        isOpen,
+        onClose,
+        existingData
+      }) => {
+
+        const [name, setName] = useState(
+          existingData?.name || ""
+        );
+
+        const [wage, setWage] = useState(
+          existingData?.wage ?? ""
+        );
+
+        const [phone, setPhone] = useState(
+          existingData?.phone || ""
+        );
+
+        const [openingBalance, setOpeningBalance] =
+          useState(
+            existingData?.openingBalance ?? ""
+          );
+
+        const [openingType, setOpeningType] =
+          useState(
+            existingData?.openingType ||
+            "Credit"
+          );
+
+        useEffect(() => {
+
+          setName(existingData?.name || "");
+
+          setWage(existingData?.wage ?? "");
+
+          setPhone(existingData?.phone || "");
+
+          setOpeningBalance(
+            existingData?.openingBalance ?? ""
+          );
+
+          setOpeningType(
+            existingData?.openingType ||
+            "Credit"
+          );
+
+        }, [existingData, isOpen]);
+
+        if (!isOpen) return null;
+
+        const handleSubmit = (e) => {
+
+          e.preventDefault();
+
+          if (!name.trim()) {
+            alert("Please enter staff name.");
+            return;
+          }
+
+          saveStaff(
+            {
+              id: existingData?.id,
+              name: name.trim(),
+              wage: parseFloat(wage) || 0,
+              phone: phone.trim(),
+              openingBalance:
+                parseFloat(openingBalance) || 0,
+              openingType,
+              joinedDate:
+                existingData?.joinedDate
+            },
+            Boolean(existingData)
+          );
+        };
+
+        return (
+
+          <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50">
+
+            <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
+
+              <div className="px-6 py-4 border-b flex justify-between items-center bg-slate-50">
+
+                <h3 className="font-bold text-lg">
+                  {existingData
+                    ? "Edit Staff"
+                    : "Add New Staff"}
+                </h3>
+
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="text-slate-400 hover:text-slate-700"
+                >
+                  <IconX />
+                </button>
+
+              </div>
+
+              <form
+                onSubmit={handleSubmit}
+                className="p-6 space-y-4"
+              >
+
+                <div>
+
+                  <label className="block text-sm font-medium mb-1">
+                    Full Name *
+                  </label>
+
+                  <input
+                    required
+                    type="text"
+                    value={name}
+                    onChange={(e) =>
+                      setName(e.target.value)
+                    }
+                    className="w-full border rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+
+                </div>
+
+                <div>
+
+                  <label className="block text-sm font-medium mb-1">
+                    Daily Salary (₹) *
+                  </label>
+
+                  <input
+                    required
+                    min="0"
+                    type="number"
+                    value={wage}
+                    onChange={(e) =>
+                      setWage(e.target.value)
+                    }
+                    className="w-full border rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+
+                </div>
+
+                <div>
+
+                  <label className="block text-sm font-medium mb-1">
+                    Phone
+                  </label>
+
+                  <input
+                    type="text"
+                    value={phone}
+                    onChange={(e) =>
+                      setPhone(e.target.value)
+                    }
+                    className="w-full border rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+
+                </div>
+
+                <div className="pt-2 border-t">
+
+                  <label className="block text-sm font-medium mb-2">
+                    Previous Opening Balance (₹)
+                  </label>
+
+                  <div className="flex bg-slate-100 p-1 rounded-xl mb-3">
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setOpeningType("Credit")
+                      }
+                      className={`flex-1 py-2 text-sm rounded-lg ${
+                        openingType === "Credit"
+                          ? "bg-white font-bold shadow-sm"
+                          : "text-slate-500"
+                      }`}
+                    >
+                      Payable to Staff
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setOpeningType("Debit")
+                      }
+                      className={`flex-1 py-2 text-sm rounded-lg ${
+                        openingType === "Debit"
+                          ? "bg-white font-bold shadow-sm"
+                          : "text-slate-500"
+                      }`}
+                    >
+                      Advance Given
+                    </button>
+
+                  </div>
+
+                  <input
+                    type="number"
+                    min="0"
+                    value={openingBalance}
+                    onChange={(e) =>
+                      setOpeningBalance(
+                        e.target.value
+                      )
+                    }
+                    className="w-full border rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="0"
+                  />
+
+                </div>
+
+                <div className="pt-4 flex space-x-3">
+
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="flex-1 py-2 border rounded-xl text-slate-600"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium"
+                  >
+                    Save
+                  </button>
+
+                </div>
+
+              </form>
+
+            </div>
+
+          </div>
+
+        );
+      };
+
+      // =========================
+      // TRANSACTION MODAL
+      // =========================
+
+      const AddTransactionModal = () => {
+
+        const [amount, setAmount] =
+          useState("");
+
+        const [date, setDate] =
+          useState(getTodayString());
+
+        useEffect(() => {
+
+          if (isAddTxOpen) {
+            setAmount("");
+            setDate(getTodayString());
+          }
+
+        }, [isAddTxOpen]);
+
+        if (!isAddTxOpen) return null;
+
+        const handleSubmit = (e) => {
+
+          e.preventDefault();
+
+          const numericAmount =
+            parseFloat(amount);
+
+          if (
+            !numericAmount ||
+            numericAmount <= 0
+          ) {
+            alert("Enter a valid amount.");
+            return;
+          }
+
+          setTransactions((prev) => [
+            {
+              id: Date.now().toString(),
+              staffId: selectedStaffId,
+              type: "Payment",
+              amount: numericAmount,
+              date
+            },
+            ...prev
+          ]);
+
+          setIsAddTxOpen(false);
+        };
+
+        return (
+
+          <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50">
+
+            <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl">
+
+              <div className="px-6 py-4 border-b flex justify-between items-center">
+
+                <h3 className="font-bold text-lg">
+                  Pay Advance / Salary
+                </h3>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setIsAddTxOpen(false)
+                  }
+                  className="text-slate-400 hover:text-slate-700"
+                >
+                  <IconX />
+                </button>
+
+              </div>
+
+              <form
+                onSubmit={handleSubmit}
+                className="p-6 space-y-4"
+              >
+
+                <div>
+
+                  <label className="block text-sm font-medium mb-1">
+                    Amount to Pay (₹) *
+                  </label>
+
+                  <input
+                    required
+                    min="1"
+                    type="number"
+                    value={amount}
+                    onChange={(e) =>
+                      setAmount(e.target.value)
+                    }
+                    className="w-full border rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+
+                </div>
+
+                <div>
+
+                  <label className="block text-sm font-medium mb-1">
+                    Date
+                  </label>
+
+                  <input
+                    required
+                    type="date"
+                    value={date}
+                    onChange={(e) =>
+                      setDate(e.target.value)
+                    }
+                    className="w-full border rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+
+                </div>
+
+                <div className="pt-4 flex space-x-3">
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setIsAddTxOpen(false)
+                    }
+                    className="flex-1 py-2 border rounded-xl"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="flex-1 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-medium"
+                  >
+                    Record Payment
+                  </button>
+
+                </div>
+
+              </form>
+
+            </div>
+
+          </div>
+
+        );
+      };
+
+      // =========================
+      // APP UI
+      // =========================
+
+      return (
+
+        <div className="min-h-screen">
+
+          <header className="bg-white border-b sticky top-0 z-30">
+
+            <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+
+              <div
+                className="flex items-center space-x-3 cursor-pointer"
+                onClick={() => {
+                  setCurrentView("dashboard");
+                  setSelectedStaffId(null);
+                }}
+              >
+
+                <div className="bg-blue-600 p-2 rounded-xl text-white">
+                  <IconUsers />
+                </div>
+
+                <h1 className="text-xl font-bold text-slate-800">
+                  StaffManager
+                </h1>
+
+              </div>
+
+              {currentView === "dashboard" && (
+
+                <button
+                  onClick={() =>
+                    setIsAddStaffOpen(true)
+                  }
+                  className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center"
+                >
+
+                  <span className="mr-1.5">
+                    <IconPlus />
+                  </span>
+
+                  Add Staff
+
+                </button>
+
+              )}
+
+            </div>
+
+          </header>
+
+          <main className="max-w-4xl mx-auto px-4 py-8">
+
+            {currentView === "dashboard"
+              ? <DashboardView />
+              : <StaffDetailsView />}
+
+          </main>
+
+          {/* ADD STAFF */}
+
+          <StaffFormModal
+            isOpen={isAddStaffOpen}
+            onClose={() =>
+              setIsAddStaffOpen(false)
+            }
+          />
+
+          {/* EDIT STAFF */}
+
+          <StaffFormModal
+            isOpen={isEditStaffOpen}
+            onClose={() =>
+              setIsEditStaffOpen(false)
+            }
+            existingData={
+              staffList.find(
+                (s) => s.id === selectedStaffId
+              )
+            }
+          />
+
+          {/* TRANSACTION */}
+
+          <AddTransactionModal />
+
+        </div>
+
+      );
+    }
+
+    // =========================
+    // START REACT
+    // =========================
+
+    const root =
+      ReactDOM.createRoot(
+        document.getElementById("root")
+      );
+
+    root.render(<App />);
+  </script>
+</body>
+</html>
