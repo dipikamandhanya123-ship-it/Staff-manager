@@ -1,13 +1,15 @@
 {
-  "name": "StaffManager",
+  "name": "StaffManager - Staff Attendance & Salary",
   "short_name": "StaffManager",
-  "description": "Track daily wage staff attendance, salary and advance payments.",
-  "start_url": "/index.html",
-  "scope": "/",
+  "description": "Track daily wage staff attendance, calculate salary, and manage advance payments.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "id": "./index.html",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#F8FAFC",
   "theme_color": "#2563EB",
+  "lang": "en",
   "icons": [
     {
       "src": "icons/icon.svg",
